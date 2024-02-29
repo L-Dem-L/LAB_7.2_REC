@@ -6,7 +6,8 @@ using namespace std;
 
 void Create(int** a, const int rowCount, const int colCount, const int Low, const int High, int i = 0, int j = 0);
 void Print(int** a, const int rowCount, const int colCount, int i = 0, int j = 0);
-void FindAndSwapMinMax(int** a, const int k, const int n, int i = 0);
+void FindAndSwapMinMax(int** a, const int k, const int n, int i = 0, int currentRow = 0);
+void FindMinMaxRecursive(int** a, const int k, const int n, const int currentRow, int currentCol, int& minValue, int& minCol, int& maxValue, int& maxCol);
 void Swap(int& a, int& b);
 
 int main() {
@@ -27,8 +28,9 @@ int main() {
     Print(a, k, n);
 
     FindAndSwapMinMax(a, k, n);
-    cout << "Swaped matrix:" << endl;
+    cout << "Swapped matrix:" << endl;
     Print(a, k, n);
+
     for (int i = 0; i < k; i++)
         delete[] a[i];
     delete[] a;
@@ -60,38 +62,34 @@ void Print(int** a, const int k, const int n, int i, int j) {
     }
 }
 
-void FindAndSwapMinMax(int** a, const int k, const int n, int i) {
-    if (i < k) {
-        int minRow = i, minCol = 0;
-        int maxRow = i, maxCol = 0;
-        int minValue = a[i][0], maxValue = a[i][0];
+void FindAndSwapMinMax(int** a, const int k, const int n, int i, int currentRow) {
+    if (currentRow >= k)
+        return;
 
-        for (int j = 0; j < n; j++) {
-            if (a[i][j] < minValue) {
-                minValue = a[i][j];
-                minCol = j;
-            }
-            if (a[i][j] > maxValue) {
-                maxValue = a[i][j];
-                maxCol = j;
-            }
-        }
+    int minCol = 0, maxCol = 0;
+    int minValue = a[currentRow][0], maxValue = a[currentRow][0];
 
-        for (int j = 0; j < n; j++) {
-            if (a[i][j] == minValue) {
-                minCol = j;
-                break;
-            }
-        }
-        for (int j = 0; j < n; j++) {
-            if (a[i][j] == maxValue) {
-                maxCol = j;
-                break;
-            }
-        }
-        Swap(a[minRow][minCol], a[maxRow][maxCol]);
-        FindAndSwapMinMax(a, k, n, i + 2);
+    FindMinMaxRecursive(a, k, n, currentRow, 0, minValue, minCol, maxValue, maxCol);
+
+    Swap(a[currentRow][minCol], a[currentRow][maxCol]);
+
+    FindAndSwapMinMax(a, k, n, i, currentRow + 2);
+}
+
+void FindMinMaxRecursive(int** a, const int k, const int n, const int currentRow, int currentCol, int& minValue, int& minCol, int& maxValue, int& maxCol) {
+    if (currentCol >= n)
+        return;
+
+    if (a[currentRow][currentCol] < minValue) {
+        minValue = a[currentRow][currentCol];
+        minCol = currentCol;
     }
+    if (a[currentRow][currentCol] > maxValue) {
+        maxValue = a[currentRow][currentCol];
+        maxCol = currentCol;
+    }
+
+    FindMinMaxRecursive(a, k, n, currentRow, currentCol + 1, minValue, minCol, maxValue, maxCol);
 }
 
 void Swap(int& a, int& b) {
