@@ -73,6 +73,7 @@ void FindAndSwapMinMax(int** a, const int k, const int n, int i, int currentRow)
 
     Swap(a[currentRow][minCol], a[currentRow][maxCol]);
 
+
     FindAndSwapMinMax(a, k, n, i, currentRow + 2);
 }
 
